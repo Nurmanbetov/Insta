@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from core.models import BaseModel
 
 class Publication(BaseModel):
-    user = models.ForeignKey(
+    publisher = models.ForeignKey(
         to=User,
         on_delete=models.CASCADE,
         related_name="publication",

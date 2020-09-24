@@ -44,3 +44,9 @@ class Profile(BaseModel):
     )
 
     
+    subscription = models.ManyToManyField(
+        to=User,
+        blank=True,
+        related_name="subscriber",
+        verbose_name="Подписка"
+    )
