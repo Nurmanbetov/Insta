@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User 
 
 
+
 class BaseModel(models.Model):
     name = models.CharField(
         max_length=255,
@@ -49,4 +50,15 @@ class Profile(BaseModel):
         blank=True,
         related_name="subscriber",
         verbose_name="Подписка"
+    )
+
+
+    description = models.TextField(
+        null=True, blank=True,
+        verbose_name="О себе"
+    )
+
+    photo = models.ImageField(
+        default="default-profile.jpg/",
+        upload_to="profiles"
     )
