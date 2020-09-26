@@ -81,3 +81,38 @@ class UserListSerializer(serializers.ModelSerializer):
 
     def get_photo(self, obj):
         return obj.profile.photo.url
+
+
+class UserEditSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User 
+        fields = ["username", "first_name", "last_name"]
+
+
+class ProfileEditSerializer(serializers.ModelSerializer):
+    #user = serializers.StringRelatedField(many=False)
+    user = UserEditSerializer()
+
+
+    class Meta:
+        model = Profile
+        fields = ["user", "description", "photo"]
+
+    #def update(self, instance, validated_data):
+    #   nested_serializer = self.fields['user']
+    #    nested_instance = instance.user
+    #    nested_data = validated_data.pop('user')
+    #    nested_serializer.update(nested_instance, nested_data)
+    #    return super(ProfileEditSerializer, self).update(instance, validated_data)
+
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ["description", "photo"]
+
+    
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User 
+        fields = ["username", "first_name", "last_name"]
