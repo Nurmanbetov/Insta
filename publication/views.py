@@ -4,11 +4,11 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.status import HTTP_404_NOT_FOUND
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, GenericAPIView
 from requests import get
 
 from .serializers import *
-from .models import Publication
+from .models import *
 
 
 class PublicationViewSet(ModelViewSet):
@@ -35,8 +35,8 @@ class UserPublicationList(ListAPIView):
 
     def get_queryset(self):
         user = User.objects.get(username=self.kwargs["username"])
-        publication = Publication.objects.filter(publisher=user)
-        return publication
+        publications = Publication.objects.filter(publisher=user)
+        return publications
 
 
 
@@ -46,6 +46,34 @@ class FeedList(ListAPIView):
 
     def get_queryset(self):
         user = User.objects.get(username=self.kwargs["username"])
-        #publication = Publication.objects.filter(publisher__in=user.profile.subscription.all())
-        publication = Publication.objects.filter(publisher__subscriber__in=[user.profile])
-        return publication
+        #publications = Publication.objects.filter(publisher__in=user.profile.subscription.all())
+        publications = Publication.objects.filter(publisher__subscriber__in=[user.profile])
+        return publications
+
+
+
+class ExploreView(ListAPIView):
+    serializer_class = PublicationListSerializer
+
+
+    def get_queryset(self):
+        user = User.objects.get(username=self.kwargs["username"])
+        tags = HashTag.objects.filter(publication__publisher=user)
+        publication = Publication.objects.filter(hashtag__in=tags).exclude(publisher=user)
+        return publication 
+
+
+class LikeView(GenericAPIView):
+    serializer_class = LikeSerializer
+
+    def post(self, request, *args, **kwargs):
+        user = User.objects.get(id=self.kwargs["user_id"])
+        publications = Publication.objects.get(id=self.kwargs["publication_id"])
+        if Like.objects.filter(user=user, publication=publication).exists():
+            Like.objects.get(user=user, publication=publication).delete()
+            date = {"message": "Like has been removed"}
+        else:
+            Like(user=user, publication=publication).save()
+            data = {"user": user.id, "publication": publication.id}
+
+        return Response(data)

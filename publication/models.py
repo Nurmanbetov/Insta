@@ -19,3 +19,37 @@ class Publication(BaseModel):
         upload_to="publications",
         verbose_name="Картинка "
     )
+
+
+    #likes = models.IntegerField(default=0,verbose_name="Нравится")
+
+
+
+
+class HashTag(BaseModel):
+    publication = models.ManyToManyField(
+        to=Publication,
+        blank=True,
+        verbose_name="Хэштег",
+        related_name="hashtag"
+    )
+
+
+
+class Like(BaseModel):
+    user = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name="like",
+        verbose_name="От кого"
+    )
+
+    publication = models.ForeignKey(
+        to=Publication,
+        on_delete=models.CASCADE,
+        related_name="like",
+        verbose_name="Какой публикации"
+    ) 
+
+
+
