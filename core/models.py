@@ -60,5 +60,5 @@ class Profile(BaseModel):
 
     photo = models.ImageField(
         default="default-profile.jpg/",
-        upload_to="profiles"
+        upload_to="media"
     )
